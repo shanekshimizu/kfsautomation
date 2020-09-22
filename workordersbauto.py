@@ -8,7 +8,7 @@ import collections
 import time
 import re
 import cProfile
-#translate pdf12
+#translate pdf123
 def translatepdf():
     """
     use tabula to convert pdf file into .csv
