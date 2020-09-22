@@ -71,8 +71,8 @@ def executeAutomation(workbookname, schoolcode):
                 try:
                     if hastotal in accountnum:
                         try:
-                            keepcomma = accountnum2.replace(',', '')
-                            allfloats = re.findall("[+-]?\d+\.\d+", keepcomma)
+                            removecomma = accountnum2.replace(',', '')
+                            allfloats = re.findall("[+-]?\d+\.\d+", removecomma)
                             print(allfloats)
                             thetotal = float(allfloats[3])
                         except:

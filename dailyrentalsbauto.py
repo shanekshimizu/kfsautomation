@@ -29,7 +29,7 @@ def translatepdf():
         dateRange = validatefile
         #dateRange = input("Please enter the date range for this report (use underscore instead of spaces): ")
         data = read_pdf(latest_file, pages = 'all')
-        tabula.convert_into(latest_file, f'Daily_Rental_{dateRange}_EXP.csv', output_format="csv", pages = 'all')
+        tabula.convert_into(latest_file, f'Daily_Rental_{dateRange}_EXP.csv', guess=False, stream=True, area = (18.05,17.9,568.49,756.57), output_format="csv", pages = 'all')
         workbookname = f'Daily_Rental_{dateRange}_EXP.csv'
         time.sleep(1)
         executeAutomation(workbookname, schoolcode)
@@ -46,34 +46,32 @@ def executeAutomation(workbookname, schoolcode):
             dicEachAccountTotals = {}
             prices = dicEachAccountTotals.values()
             total = sum(prices)
+            accountcharge = []
             for column in readfile:
-                accountnum = column[3]
+                accountnum = column[0]
                 accountnum2 = column[0]
-                hasparen = "("
+                hasparen = "(" + schoolcode
                 if not accountnum:
                     continue
                 if not accountnum2:
                     continue
+                
                 if hasparen in accountnum:
-                    theaccount = accountnum[5:12]
-                    charge = column[14]
-                    writefile.writerow(("MA", theaccount, '5705', '', '', '', 'DAILY RENTAL CHARGE', charge))
-                    writefile.writerow(("MA", theaccount, '0704', '', '', '', 'DAILY RENTAL CHARGE', charge))
-
-                #Failsafe 1
-                if schoolcode.upper() in accountnum2:
-                    charge = column[11]
-                    codehere = accountnum2.find(schoolcode.upper())
-                    theaccount = accountnum2[int(codehere) + 3: int(codehere) + 10]
+                    codehere = accountnum.find(hasparen.upper())
+                    theaccount = accountnum[int(codehere) + 3: int(codehere) + 11]
+                    #theaccount = accountnum2[5:12]
+                    charge = column[10].replace(',', '')
                     if theaccount in dicEachAccountTotals:
-                        dicEachAccountTotals[theaccount].append(float(charge))
+                        dicEachAccountTotals[theaccount.strip()].append(float(charge))
                     else:
-                        dicEachAccountTotals[theaccount] = [float(charge)]
+                        dicEachAccountTotals[theaccount.strip()] = [float(charge)]
+           
             for k,v in dicEachAccountTotals.items():
                 dicEachAccountTotals[k] = sum(dicEachAccountTotals[k])
             for k,v in dicEachAccountTotals.items():
                 writefile.writerow((schoolcode, k, '', '5705', '', '', '', 'DAILY RENTAL', v))
                 writefile2.writerow((schoolcode, 2302699, '', '0704', '', '', '', 'DAILY RENTAL', v))
+        pprint.pprint(dicEachAccountTotals)
     
     sendToKFS()
 
@@ -81,8 +79,5 @@ def sendToKFS():
     pass
 
 
-                
-
-
-
-translatepdf()
+if __name__ == "__main__":
+    translatepdf()
