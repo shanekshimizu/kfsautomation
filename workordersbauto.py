@@ -48,18 +48,16 @@ def executeAutomation(workbookname, schoolcode):
             rowcount = 0
             for column in readfile:
 
-                #should ignore these cells
+                #should only use cedlls with these labels
                 hastotal = "Department Totals"
-                notaccount = "YAMAHA"
-                notaccount2 = "MANAGEMENT"
-                departmentname = "Department:"
+                accountlbl = "Account"
 
                 #Add accounts to dictionary 
                 accountnum = column[0]
                 if accountnum[13:20] in dicEachAccountTotals:
                     theaccount2 = accountnum[13:20]
                     dicEachAccountTotals[str(theaccount2) + 'd'] = []
-                elif schoolcode.upper() in accountnum and notaccount not in accountnum and notaccount2 not in accountnum:
+                elif schoolcode.upper() in accountnum and accountlbl in accountnum:
                     theaccount = accountnum[13:20]
                     dicEachAccountTotals[theaccount] = [None]
 
