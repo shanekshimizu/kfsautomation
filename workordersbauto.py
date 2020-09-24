@@ -8,8 +8,6 @@ import collections
 import time
 import re
 import cProfile
-#translate pdf1234589
-
 
 def translatepdf():
     """
@@ -36,8 +34,7 @@ def translatepdf():
         executeAutomation(workbookname, schoolcode)
     else:
         exit()
-workbookname = 'Work_Order_qwe_EXP.csv'
-schoolcode = 'SW'
+
 def executeAutomation(workbookname, schoolcode):
     with open(workbookname, 'r') as readit:
         readfile = csv.reader(readit)
@@ -50,59 +47,50 @@ def executeAutomation(workbookname, schoolcode):
             total = sum(prices)
             rowcount = 0
             for column in readfile:
+
+                #should ignore these cells
                 hastotal = "Department Totals"
-                accountnum = column[0]
-                diclist = []
-                try:
-                    accountnum2 = column[5]
-                except:
-                    continue
                 notaccount = "YAMAHA"
+                notaccount2 = "MANAGEMENT"
                 departmentname = "Department:"
-                #if accountnum and department name different, duplicate account with special charcter, append to dictionary
+
+                #Add accounts to dictionary 
+                accountnum = column[0]
                 if accountnum[13:20] in dicEachAccountTotals:
                     theaccount2 = accountnum[13:20]
                     dicEachAccountTotals[str(theaccount2) + 'd'] = []
-    
-                elif schoolcode.upper() in accountnum and notaccount not in accountnum:
+                elif schoolcode.upper() in accountnum and notaccount not in accountnum and notaccount2 not in accountnum:
                     theaccount = accountnum[13:20]
-                    dicEachAccountTotals[theaccount] = None
-                    print(dicEachAccountTotals)
-                try:
-                    if hastotal in accountnum:
-                        try:
-                            removecomma = accountnum2.replace(',', '')
-                            allfloats = re.findall("[+-]?\d+\.\d+", removecomma)
-                            print(allfloats)
-                            thetotal = float(allfloats[3])
-                        except:
-                            accountnum10 = column[8]
-                            allfloats7 = re.findall("[+-]?\d+\.\d+", accountnum10)
-                            thetotal = accountnum10
-                        recentkey = list(dicEachAccountTotals.keys())[-1]
-                        dicEachAccountTotals[f"{recentkey}"]=thetotal
-                        print(dicEachAccountTotals)
-                        print("\n")
-                except IndexError:
-                    print("exception 1 was ran")
-                    if hastotal in accountnum:
-                        accountnum3 = column[9]
-                        allfloats = re.findall("[+-]?\d+\.\d+", accountnum3)
-                        dicEachAccountTotals[theaccount] = accountnum3
-                    elif hastotal in accountnum:
-                        accountnum4 = column[8]
-                        allfloats = re.findall("[+-]?\d+\.\d+", accountnum4)
-                        dicEachAccountTotals[theaccount] = accountnum4
-                    else: 
-                        accountnum5 = column[0]
-                        allfloats = re.findall("[+-]?\d+\.\d+", accountnum5)
-                        thetotal = float(allfloats[-1])
-                        dicEachAccountTotals[theaccount] = thetotal
+                    dicEachAccountTotals[theaccount] = [None]
+
+                #Add charges to each account in dictionary 
+                if hastotal in accountnum:
+                    priceselect = [6,7,8,9]
+                    pricenum = column[5]
+                    removecomma = pricenum.replace(',', '')
+                    allfloats = re.findall("[+-]?\d+\.\d+", removecomma)
+                    try:
+                        thetotal = float(allfloats[3])
+                    except IndexError:
+                        for i in priceselect:
+                            try:
+                                pricenum = column[i].replace(',', '')
+                                if pricenum == 0:
+                                    raise IndexError
+                            except IndexError:
+                                if pricenum != 0:
+                                    thetotal = pricenum
+                                    break
+    
+                    recentkey = list(dicEachAccountTotals.keys())[-1]
+                    dicEachAccountTotals[f"{recentkey}"] = float(thetotal)
+
             for k, v in dicEachAccountTotals.items():
                 writefile.writerow((schoolcode, k[0:7], '', '5840', '', '', '', 'STATE VEHICLE R/M CHARGE', v))
                 writefile2.writerow(("MA", 2302698, '', '0751', '', '', '', 'STATE VEHICLE R/M CHARGE', v))
                     
-    
-        pprint.pprint(dicEachAccountTotals)
+        print("\n")
+        pprint.pprint(collections.OrderedDict(dicEachAccountTotals))
 
 translatepdf()
+
