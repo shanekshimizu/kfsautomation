@@ -90,5 +90,6 @@ def executeAutomation(workbookname, schoolcode):
         print("\n")
         pprint.pprint(collections.OrderedDict(dicEachAccountTotals))
 
-translatepdf()
+if __name__ == "__main__":
+    translatepdf()
 

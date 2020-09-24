@@ -12,8 +12,6 @@ import pyautogui
 import collections
 import time
 
-
-
 def translatepdf():
     pass
     """
@@ -49,17 +47,12 @@ def executeAutomation(workbookname, schoolcode):
             accountcharge = []
             for column in readfile:
                 accountnum = column[0]
-                accountnum2 = column[0]
                 hasparen = "(" + schoolcode
                 if not accountnum:
                     continue
-                if not accountnum2:
-                    continue
-                
                 if hasparen in accountnum:
                     codehere = accountnum.find(hasparen.upper())
                     theaccount = accountnum[int(codehere) + 3: int(codehere) + 11]
-                    #theaccount = accountnum2[5:12]
                     charge = column[10].replace(',', '')
                     if theaccount in dicEachAccountTotals:
                         dicEachAccountTotals[theaccount.strip()].append(float(charge))
@@ -71,13 +64,9 @@ def executeAutomation(workbookname, schoolcode):
             for k,v in dicEachAccountTotals.items():
                 writefile.writerow((schoolcode, k, '', '5705', '', '', '', 'DAILY RENTAL', v))
                 writefile2.writerow((schoolcode, 2302699, '', '0704', '', '', '', 'DAILY RENTAL', v))
+
         pprint.pprint(dicEachAccountTotals)
     
-    sendToKFS()
-
-def sendToKFS():
-    pass
-
 
 if __name__ == "__main__":
     translatepdf()
