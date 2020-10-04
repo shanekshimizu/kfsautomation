@@ -1,18 +1,10 @@
 import csv
-import openpyxl
 import pprint
 import glob
 import os
 from tabula import read_pdf
 import tabula
 import time
-from pyexcel.cookbook import merge_all_to_a_book
-from selenium import webdriver
-import time
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-
 
 
 def translatepdf():
@@ -36,8 +28,6 @@ def translatepdf():
     else:
         exit()
 
-#translatepdf()
-
 
 def executeAutomation(workbookname):
     #EXP and REV
@@ -58,6 +48,5 @@ def executeAutomation(workbookname):
                 writefile2.writerow(("MA", 2214012, '', 3700, '', '', '', "MAIL CHARGE", charge))
          
 
-
-workbookname = f'Mail_mailtest1_EXP.csv'
-executeAutomation(workbookname)
+if __name__ == "__main__":
+    translatepdf()
