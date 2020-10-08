@@ -7,7 +7,6 @@ import tabula
 import collections
 import time
 import re
-import cProfile
 
 def translatepdf():
     """
@@ -48,7 +47,7 @@ def executeAutomation(workbookname, schoolcode):
             rowcount = 0
             for column in readfile:
 
-                #should only use cedlls with these labels
+                #should only use cells with these labels
                 hastotal = "Department Totals"
                 accountlbl = "Account"
 
@@ -77,7 +76,9 @@ def executeAutomation(workbookname, schoolcode):
                                     raise IndexError
                             except IndexError:
                                 if pricenum != 0:
-                                    thetotal = pricenum
+                                    removecomma = pricenum.replace(',', '')
+                                    allfloats = re.findall("[+-]?\d+\.\d+", removecomma)
+                                    thetotal = float(allfloats[-1])
                                     break
     
                     recentkey = list(dicEachAccountTotals.keys())[-1]
