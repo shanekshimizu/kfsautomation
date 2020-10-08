@@ -48,10 +48,12 @@ def executeAutomation(workbookname, schoolcode):
             priceoptions = [11, 10, 9, 8]
             mail = "MAIL"
             gas = "GAS"
+            uhwo = "UHWO"
+            yamaha = "YAMAHA"
             for column in readfile:
                 for i in accountoptions:
                     #REGULAR ACCOUNT ONLY
-                    if schoolcode in column[i] and mail not in column[i] and gas not in column[1]:
+                    if schoolcode in column[i] and mail not in column[i] and gas not in column[1] and uhwo not in column[i] and yamaha not in column[i]:
                         if column[i] in dicEachAccountTotals:
                             for p in priceoptions:
                                 try:
@@ -97,8 +99,8 @@ def executeAutomation(workbookname, schoolcode):
                 
            
             pprint.pprint(dicEachAccountTotals)
-    os.system(f"open 'EXP_{workbookname}.csv'")
-    os.system(f"open 'REV_{workbookname}.csv'")
+    os.system(f"open 'EXP_{workbookname}'")
+    os.system(f"open 'REV_{workbookname}'")
 
 
     
