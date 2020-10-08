@@ -17,14 +17,11 @@ def translatepdf():
     validatefile = input("name this file: ")
     schoolcode = input("School Code: ")
     print("\n")
-    #validatefile = input("Is " + latest_file + " the file you want to process?" + "\n type yes or no: ")
 
     if validatefile.lower() != None:
         dateRange = validatefile
-        #dateRange = input("Please enter the date range for this report (use underscore instead of spaces): ")
         try:
             data = read_pdf(latest_file, pages = 'all')
-            #guess=False, stream=True, area = (54.85,15.76,775.07,595.18)
             tabula.convert_into(latest_file, f'Fuel_{dateRange}_EXP.csv', output_format="csv", pages = 'all')
         except:
             print("not a fleet report, check recent download")
