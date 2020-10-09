@@ -24,11 +24,11 @@ def translatepdf():
         #dateRange = input("Please enter the date range for this report (use underscore instead of spaces): ")
         try:
             data = read_pdf(latest_file, pages = 'all')
-            tabula.convert_into(latest_file, f'Work_Order_{dateRange}_EXP.csv',  guess=False, stream=True, area = (18.05,17.9,568.49,756.57), output_format="csv", pages = 'all')
+            tabula.convert_into(latest_file, f'Work_Order_{dateRange}.csv',  guess=False, stream=True, area = (18.05,17.9,568.49,756.57), output_format="csv", pages = 'all')
         except:
             print("not a fleet report, check recent download")
             return
-        workbookname = f'Work_Order_{dateRange}_EXP.csv'
+        workbookname = f'Work_Order_{dateRange}.csv'
         time.sleep(1)
         executeAutomation(workbookname, schoolcode)
     else:
@@ -38,7 +38,7 @@ def executeAutomation(workbookname, schoolcode):
     with open(workbookname, 'r') as readit:
         readfile = csv.reader(readit)
         next(readfile)
-        with open(f'EXP_{workbookname}.csv', 'w') as writeit, open(f'REV_{workbookname}.csv', 'w') as writeit2:
+        with open(f'EXP_{workbookname}', 'w') as writeit, open(f'REV_{workbookname}', 'w') as writeit2:
             writefile = csv.writer(writeit)
             writefile2 = csv.writer(writeit2)
             dicEachAccountTotals = {}
@@ -90,6 +90,9 @@ def executeAutomation(workbookname, schoolcode):
                     
         print("\n")
         pprint.pprint(collections.OrderedDict(dicEachAccountTotals))
+
+        os.system(f"open 'EXP_{workbookname}'")
+        os.system(f"open 'REV_{workbookname}'")
 
 if __name__ == "__main__":
     translatepdf()

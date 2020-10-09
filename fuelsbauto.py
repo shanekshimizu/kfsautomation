@@ -22,6 +22,7 @@ def translatepdf():
         dateRange = validatefile
         try:
             data = read_pdf(latest_file, pages = 'all')
+            os.system(f"open {latest_file}")
             tabula.convert_into(latest_file, f'Fuel_{dateRange}_EXP.csv', output_format="csv", pages = 'all')
         except:
             print("not a fleet report, check recent download")
