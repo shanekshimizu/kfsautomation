@@ -1,16 +1,11 @@
 import csv
-import openpyxl
 import pprint
 import glob
 import os
 from tabula import read_pdf
 import tabula
 import time
-from pyexcel.cookbook import merge_all_to_a_book
-import pandas as pd
-import pyautogui
 import collections
-import time
 
 def translatepdf():
     pass
@@ -19,53 +14,65 @@ def translatepdf():
     """
     list_of_files = glob.glob('/Users/shaneshimizu/Downloads/*') # * means all if need specific format then *.csv
     latest_file = max(list_of_files, key=os.path.getctime)
-    validatefile = input("name this file: ")
-    schoolcode = input("School Code: ")
-    #validatefile = input("Is " + latest_file + " the file you want to process?" + "\n type yes or no: ")
+    validateFile = input("name this file: ")
+    schoolCode = input("School Code: ")
 
-    if validatefile.lower() != None:
-        dateRange = validatefile
-        #dateRange = input("Please enter the date range for this report (use underscore instead of spaces): ")
-        data = read_pdf(latest_file, pages = 'all')
-        tabula.convert_into(latest_file, f'Daily_Rental_{dateRange}_EXP.csv', guess=False, stream=True, area = (18.05,17.9,568.49,756.57), output_format="csv", pages = 'all')
-        workbookname = f'Daily_Rental_{dateRange}_EXP.csv'
+    if validateFile.lower() != None:
+        dateRange = validateFile
+        #read recent file in download, read only set area, output into a csv file
+        try:
+            data = read_pdf(latest_file, pages = 'all')
+            tabula.convert_into(latest_file, f'Daily_Rental_{dateRange}_EXP.csv', guess=False, stream=True, area = (18.05,17.9,568.49,756.57), output_format="csv", pages = 'all')
+        #most recent file is not a accepted file for conversion
+        except:
+            print("not a fleet report, check recent download")
+            return
+        workBookName = f'Daily_Rental_{dateRange}_EXP.csv'
         time.sleep(1)
-        executeAutomation(workbookname, schoolcode)
+        executeAutomation(workBookName, schoolCode)
     else:
         exit()
 
-def executeAutomation(workbookname, schoolcode):
-    with open(workbookname, 'r') as readit:
-        readfile = csv.reader(readit)
-        next(readfile)
-        with open(f'EXP_{workbookname}.csv', 'w') as writeit, open(f'REV_{workbookname}.csv', 'w') as writeit2:
-            writefile = csv.writer(writeit)
-            writefile2 = csv.writer(writeit2)
+def executeAutomation(workBookName, schoolCode):
+    """
+    Read the converted csv, extract account and respective prices only, write into two seperate csv files 
+    """
+    with open(workBookName, 'r') as readIt:
+        readFile = csv.reader(readIt)
+        next(readFile)
+        with open(f'EXP_{workBookName}.csv', 'w') as writeExpData, open(f'REV_{workBookName}.csv', 'w') as writeRevData:
+            writeEXP = csv.writer(writeExpData)
+            writeRev = csv.writer(writeRevData)
             dicEachAccountTotals = {}
-            prices = dicEachAccountTotals.values()
-            total = sum(prices)
-            accountcharge = []
-            for column in readfile:
-                accountnum = column[0]
-                hasparen = "(" + schoolcode
-                if not accountnum:
+            
+            for row in readFile:
+                accountNum = row[0]
+                hasParen = "(" + schoolCode #prevent other words from reading as schoolcode
+                if not accountNum:
                     continue
-                if hasparen in accountnum:
-                    codehere = accountnum.find(hasparen.upper())
-                    theaccount = accountnum[int(codehere) + 3: int(codehere) + 11]
-                    charge = column[10].replace(',', '')
-                    if theaccount in dicEachAccountTotals:
-                        dicEachAccountTotals[theaccount.strip()].append(float(charge))
+                if hasParen in accountNum:
+                    realSchoolCode = accountNum.find(hasParen.upper())
+                    realAccount = accountNum[int(realSchoolCode) + 3: int(realSchoolCode) + 11]
+                    price = row[10].replace(',', '')
+                    if realAccount in dicEachAccountTotals:
+                        dicEachAccountTotals[realAccount.strip()].append(float(price))
                     else:
-                        dicEachAccountTotals[theaccount.strip()] = [float(charge)]
-           
+                        dicEachAccountTotals[realAccount.strip()] = [float(price)]
+
+            #sum values of all keys
             for k,v in dicEachAccountTotals.items():
                 dicEachAccountTotals[k] = sum(dicEachAccountTotals[k])
+
+            #write accounts and charges to REV and EXP files
             for k,v in dicEachAccountTotals.items():
-                writefile.writerow((schoolcode, k, '', '5705', '', '', '', 'DAILY RENTAL', v))
-                writefile2.writerow((schoolcode, 2302699, '', '0704', '', '', '', 'DAILY RENTAL', v))
+                writeEXP.writerow((schoolCode, k, '', '5705', '', '', '', 'DAILY RENTAL', v))
+                writeRev.writerow((schoolCode, 2302699, '', '0704', '', '', '', 'DAILY RENTAL', v))
 
         pprint.pprint(dicEachAccountTotals)
+
+    #open csv files to double check before submitting
+    os.system(f"open 'EXP_{workBookName}'")
+    os.system(f"open 'REV_{workBookName}'")
     
 
 if __name__ == "__main__":

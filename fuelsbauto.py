@@ -16,14 +16,12 @@ def translatepdf():
     latest_file = max(list_of_files, key=os.path.getctime)
     validateFile = input("name this file: ")
     schoolCode = input("School Code: ")
-    print("\n")
 
     if validateFile.lower() != None:
         dateRange = validateFile
         #read recent file in download, read only set area, output into a csv file
         try:
             data = read_pdf(latest_file, pages = 'all')
-            os.system(f"open {latest_file}")
             tabula.convert_into(latest_file, f'Fuel_{dateRange}_EXP.csv', output_format="csv", pages = 'all')
         #most recent file is not a accepted file for conversion
         except:
@@ -94,11 +92,11 @@ def executeAutomation(workBookName, schoolCode):
                                 except IndexError:
                                     continue
 
-            #some values of all keys
+            #sum values of all keys
             for k, v in dicEachAccountTotals.items():
                 dicEachAccountTotals[k] = sum(v)
 
-            ##write accounts and charges to REV and EXP files
+            #write accounts and charges to REV and EXP files
             for k,v in dicEachAccountTotals.items():
                 if k[-1] == "G": #gas accounts
                     writeExp.writerow((schoolCode, k.partition(schoolCode)[2][0:8].strip(), '', '3035', '', '', '', 'GAS CHARGE', v))
