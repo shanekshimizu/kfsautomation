@@ -64,7 +64,7 @@ def executeAutomation(workBookName, schoolCode):
                 # Add charges to each account in dictionary
                 if hasTotal in accountNum:
                     price = row[5]
-                    priceSelect = [6, 7, 8, 9]  #other columns prices may be in
+                    priceOptions = [6, 7, 8, 9]  #other columns prices may be in
                     
                     try:
                         removeComma = price.replace(',', '')
@@ -72,7 +72,7 @@ def executeAutomation(workBookName, schoolCode):
                         realPrice = float(allFloats[3]) #grab the price at 3rd index of that row 
                     #price is not in it's usual row
                     except IndexError:
-                        for i in priceSelect:
+                        for i in priceOptions:
                             try:
                                 price = row[i].replace(',', '')
                                 if price == 0: #price may sometimes read 0
