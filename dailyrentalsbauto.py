@@ -40,7 +40,7 @@ def executeAutomation(workBookName, schoolCode):
     with open(workBookName, 'r') as readIt:
         readFile = csv.reader(readIt)
         next(readFile)
-        with open(f'EXP_{workBookName}.csv', 'w') as writeExpData, open(f'REV_{workBookName}.csv', 'w') as writeRevData:
+        with open(f'EXP_{workBookName}', 'w') as writeExpData, open(f'REV_{workBookName}', 'w') as writeRevData:
             writeEXP = csv.writer(writeExpData)
             writeRev = csv.writer(writeRevData)
             dicEachAccountTotals = {}
