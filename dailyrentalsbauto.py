@@ -65,8 +65,8 @@ def executeAutomation(workBookName, schoolCode):
 
             #write accounts and charges to REV and EXP files
             for k,v in dicEachAccountTotals.items():
-                writeEXP.writerow((schoolCode, k, '', '5705', '', '', '', 'DAILY RENTAL', v))
-                writeRev.writerow((schoolCode, 2302699, '', '0704', '', '', '', 'DAILY RENTAL', v))
+                writeEXP.writerow((schoolCode, k, '', '5705', '', '', '', 'DAILY RENTAL CHARGE', v))
+                writeRev.writerow((schoolCode, 2302699, '', '0704', '', '', '', 'DAILY RENTAL CHARGE', v))
 
         pprint.pprint(dicEachAccountTotals)
 
