@@ -16,6 +16,7 @@ def translatepdf():
     latest_file = max(list_of_files, key=os.path.getctime)
     validateFile = input("name this file: ")
     schoolCode = input("School Code: ")
+    os.system(f"open '{latest_file}'")
 
     if validateFile.lower() != None:
         dateRange = validateFile
