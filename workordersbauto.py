@@ -7,8 +7,9 @@ import tabula
 import collections
 import time
 import re
+import getpass
 
-
+username = getpass.getuser()
 def translatepdf():
     """
     Use tabula to convert pdf file into .csv
@@ -21,29 +22,35 @@ def translatepdf():
     
     if validateFile.lower() != None:
         dateRange = validateFile
+        pathToFile = f'/Users/{username}/Desktop/service_billings/tabula_csv/'
+        fileName = f'Work_Order_{dateRange}.csv'
+        joinPath = os.path.join(pathToFile, fileName)
         #read recent file in download, read only set area, output into a csv file
         try:
             data = read_pdf(latest_file, pages='all')
-            tabula.convert_into(latest_file, f'Work_Order_{dateRange}.csv',  guess=False, stream=True, area=(
+            tabula.convert_into(latest_file, joinPath,  guess=False, stream=True, area=(
                 18.05, 17.9, 568.49, 756.57), output_format="csv", pages='all')
         #most recent file is not a accepted file for conversion
         except:
             print("not a fleet report, check recent download")
             return
-        workBookName = f'Work_Order_{dateRange}.csv'
+        workBookName = joinPath
         time.sleep(1)
-        executeAutomation(workBookName, schoolCode)
+        executeAutomation(workBookName, schoolCode, dateRange)
     else:
         exit()
 
-def executeAutomation(workBookName, schoolCode):
+def executeAutomation(workBookName, schoolCode, dateRange):
     """
     Read the converted csv, extract account and respective charges only, write into two seperate csv files 
     """
     with open(workBookName, 'r') as readIt:
         readFile = csv.reader(readIt)
         next(readFile)
-        with open(f'EXP_{workBookName}', 'w') as writeExpData, open(f'REV_{workBookName}', 'w') as writeRevData:
+        pathToFile = f'/Users/{username}/Desktop/service_billings/'
+        fileName = f'Work_Order_{dateRange}'
+        joinPath = os.path.join(pathToFile, fileName)
+        with open(f'{joinPath}_EXP.csv', 'w') as writeExpData, open(f'{joinPath}_REV.csv', 'w') as writeRevData:
             writeExp = csv.writer(writeExpData)
             writeRev = csv.writer(writeRevData)
             dicEachAccountTotals = {}
@@ -100,8 +107,8 @@ def executeAutomation(workBookName, schoolCode):
         pprint.pprint(collections.OrderedDict(dicEachAccountTotals))
 
         #open csv files to double check before submitting
-        os.system(f"open 'EXP_{workBookName}'")
-        os.system(f"open 'REV_{workBookName}'")
+        os.system(f"open '{joinPath}_EXP.csv'")
+        os.system(f"open '{joinPath}_REV.csv'")
 
 
 if __name__ == "__main__":
