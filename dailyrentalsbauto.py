@@ -48,6 +48,7 @@ def executeAutomation(workBookName, schoolCode, dateRange):
         pathToFile = f'/Users/{username}/Desktop/service_billings/'
         fileName = f'Daily_Rental_{dateRange}'
         joinPath = os.path.join(pathToFile, fileName)
+
         with open(f'{joinPath}_EXP.csv', 'w') as writeExpData, open(f'{joinPath}_REV.csv', 'w') as writeRevData:
             writeEXP = csv.writer(writeExpData)
             writeRev = csv.writer(writeRevData)
@@ -62,8 +63,9 @@ def executeAutomation(workBookName, schoolCode, dateRange):
                     realSchoolCode = accountNum.find(hasParen.upper())
                     realAccount = accountNum[int(realSchoolCode) + 3: int(realSchoolCode) + 11]
                     price = row[10].replace(',', '')
-                    if realAccount in dicEachAccountTotals:
+                    if realAccount.strip() in dicEachAccountTotals:
                         dicEachAccountTotals[realAccount.strip()].append(float(price))
+                        print("account exists")
                     else:
                         dicEachAccountTotals[realAccount.strip()] = [float(price)]
 
