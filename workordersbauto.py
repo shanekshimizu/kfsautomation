@@ -71,8 +71,11 @@ def executeAutomation(workBookName, schoolCode, dateRange):
 
                 # Add charges to each account in dictionary
                 if hasTotal in accountNum:
-                    price = row[5]
-                    priceOptions = [6, 7, 8, 9]  #other columns prices may be in
+                    try:
+                        price = row[4]
+                    except IndexError:
+                        continue
+                    priceOptions = [5, 6, 7, 8, 9]  #other columns prices may be in
                     
                     try:
                         removeComma = price.replace(',', '')
