@@ -116,7 +116,7 @@ def executeAutomation(workBookName, schoolCode, dateRange):
 
     #open csv files to double check before submitting
     os.system(f"open '{joinPath}_EXP.csv'")
-    os.system(f"open '{joinPath}_REV.csv'")
+    # os.system(f"open '{joinPath}_REV.csv'")
 
 
 if __name__ == "__main__":
